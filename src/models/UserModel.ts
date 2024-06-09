@@ -1,9 +1,9 @@
-import { Model, DataTypes, CreationOptional, HasManyCreateAssociationMixin } from 'sequelize';
+import { Model, DataTypes, CreationOptional, Sequelize } from 'sequelize';
 import { User } from '../types/User';
-import sqlConnection from '../db/db';
-import TodoModel from './TodoModel';
+import {sequelize} from '../db/db';
+import {TodoModel} from './TodoModel';
 
-class UserModel extends Model<User> implements User {
+export class UserModel extends Model<User> implements User {
   public id!: CreationOptional<string>;
   public firstName!: string;
   public lastName!: string;
@@ -49,14 +49,10 @@ UserModel.init(
     },
   },
   {
-    sequelize: sqlConnection,
+    sequelize: sequelize,
     modelName: 'User',
     tableName: 'users',
     timestamps: true,
   }
 );
 
-UserModel.hasMany(TodoModel, { foreignKey: 'userId', as: 'todos' });
-TodoModel.belongsTo(UserModel, { foreignKey: 'userId', as: 'user' });
-
-export default UserModel;

@@ -1,11 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TodoModel = void 0;
 const sequelize_1 = require("sequelize");
-const db_1 = __importDefault(require("../db/db"));
+const db_1 = require("../db/db");
 class TodoModel extends sequelize_1.Model {
 }
 exports.TodoModel = TodoModel;
@@ -42,9 +39,7 @@ TodoModel.init({
         allowNull: false,
     },
 }, {
-    sequelize: db_1.default,
+    sequelize: db_1.sequelize,
     modelName: 'Todo',
-    tableName: 'todos',
     timestamps: true,
 });
-exports.default = TodoModel;

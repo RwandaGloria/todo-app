@@ -1,10 +1,9 @@
-// src/models/todo.model.ts
 import { Model, DataTypes, CreationOptional } from 'sequelize';
-import sqlConnection from "../db/db";
+import {sequelize} from "../db/db";
 import { Todo } from "../types/Todo";
 
-export class TodoModel extends Model<Todo> implements Todo {
-  public id!: CreationOptional<string>;
+export class TodoModel extends Model<Todo> {
+  // public id!: CreationOptional<string>;
   public description!: string;
   public title!: string;
   public isCompleted!: boolean;
@@ -48,11 +47,8 @@ TodoModel.init(
     },
   },
   {
-    sequelize: sqlConnection,
+    sequelize: sequelize,
     modelName: 'Todo',
-    tableName: 'todos',
     timestamps: true,
   }
 );
-
-export default TodoModel;

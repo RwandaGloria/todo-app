@@ -38,11 +38,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importDefault(require("express"));
 const dotenv = __importStar(require("dotenv"));
-const db_1 = require("./db/db");
+const syncModel_1 = require("./models/syncModel");
 dotenv.config();
 exports.app = (0, express_1.default)();
 const PORT = process.env.PORT || 3400;
 exports.app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, db_1.checkConnection)();
+    yield (0, syncModel_1.syncModels)();
     console.log(`Server is running on port ${PORT}`);
 }));

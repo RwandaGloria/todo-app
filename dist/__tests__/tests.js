@@ -14,15 +14,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("../app");
 const supertest_1 = __importDefault(require("supertest"));
-const db_1 = __importDefault(require("../db/db"));
 describe("GET /api/v1/todos", () => {
     beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            yield db_1.default;
-        }
-        catch (err) {
-            console.log("Error");
-        }
     }));
     it("It should return a JSON file containing the Users Todos", () => __awaiter(void 0, void 0, void 0, function* () {
         const resp = yield (0, supertest_1.default)(app_1.app).get("/api/v1/todos");

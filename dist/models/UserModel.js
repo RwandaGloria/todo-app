@@ -1,13 +1,11 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserModel = void 0;
 const sequelize_1 = require("sequelize");
-const db_1 = __importDefault(require("../db/db"));
-const TodoModel_1 = __importDefault(require("./TodoModel"));
+const db_1 = require("../db/db");
 class UserModel extends sequelize_1.Model {
 }
+exports.UserModel = UserModel;
 UserModel.init({
     id: {
         type: sequelize_1.DataTypes.UUID,
@@ -42,11 +40,8 @@ UserModel.init({
         defaultValue: sequelize_1.DataTypes.NOW,
     },
 }, {
-    sequelize: db_1.default,
+    sequelize: db_1.sequelize,
     modelName: 'User',
     tableName: 'users',
     timestamps: true,
 });
-UserModel.hasMany(TodoModel_1.default, { foreignKey: 'userId', as: 'todos' });
-TodoModel_1.default.belongsTo(UserModel, { foreignKey: 'userId', as: 'user' });
-exports.default = UserModel;
