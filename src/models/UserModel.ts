@@ -9,8 +9,6 @@ export class UserModel extends Model<User> implements User {
   public lastName!: string;
   public email!: string;
   public password!: string;
-  public createdAt!: CreationOptional<Date>;
-  public updatedAt!: CreationOptional<Date>;
 }
 
 UserModel.init(
@@ -36,16 +34,6 @@ UserModel.init(
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
     },
   },
   {

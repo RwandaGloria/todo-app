@@ -7,8 +7,6 @@ export class TodoModel extends Model<Todo> {
   public description!: string;
   public title!: string;
   public isCompleted!: boolean;
-  public createdAt!: CreationOptional<Date>;
-  public updatedAt!: CreationOptional<Date>;
   public userId!: string;
 }
 
@@ -31,24 +29,20 @@ TodoModel.init(
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    createdAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
-    updatedAt: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
+
     userId: {
-      type: DataTypes.UUID,
-      allowNull: false,
-    },
+    type: DataTypes.UUID,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id',
+    }
+  }
   },
   {
     sequelize: sequelize,
     modelName: 'Todo',
+    tableName: 'todos',
     timestamps: true,
   }
 );

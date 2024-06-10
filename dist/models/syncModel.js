@@ -17,7 +17,7 @@ const syncModels = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield db_1.sequelize.authenticate();
         console.log('Connection has been established successfully.');
-        UserModel_1.UserModel.hasMany(TodoModel_1.TodoModel, { foreignKey: 'id' });
+        UserModel_1.UserModel.hasMany(TodoModel_1.TodoModel, { foreignKey: 'userId' });
         TodoModel_1.TodoModel.belongsTo(UserModel_1.UserModel, { foreignKey: 'userId' });
         yield UserModel_1.UserModel.sync();
         console.log('User table has been synchronized.');

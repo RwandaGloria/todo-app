@@ -7,8 +7,8 @@ export const syncModels = async () => {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
 
-    UserModel.hasMany(TodoModel, { foreignKey: 'id' });
-    TodoModel.belongsTo(UserModel, { foreignKey: 'userId'});
+    UserModel.hasMany(TodoModel, { foreignKey: 'userId' });
+    TodoModel.belongsTo(UserModel, { foreignKey: 'userId' });
     await UserModel.sync();
     console.log('User table has been synchronized.');
 

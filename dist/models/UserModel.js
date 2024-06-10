@@ -29,16 +29,6 @@ UserModel.init({
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
     },
-    createdAt: {
-        type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
-        defaultValue: sequelize_1.DataTypes.NOW,
-    },
-    updatedAt: {
-        type: sequelize_1.DataTypes.DATE,
-        allowNull: false,
-        defaultValue: sequelize_1.DataTypes.NOW,
-    },
 }, {
     sequelize: db_1.sequelize,
     modelName: 'User',
