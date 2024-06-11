@@ -1,29 +1,28 @@
 import { TodoModel } from "../models/TodoModel";
 import { CustomError } from "../types/types";
+import { UpdateTodoData } from "../types/types";
 import { Todo } from "../types/types";
 
 export class TodoService {
  static async getAllTodos(userId: string): Promise<TodoModel[]> {
-    try {
       const todos = await TodoModel.findAll({ where: { userId } });
-      if (todos.length === 0) {
+      if (!todos) {
         throw new CustomError("No todos found", 404)
       }
       return todos;
-    } catch (err) {
-      console.error(err)
-      throw err
-    }
+  
   }
 
-  static async getTodo(id: string) : Promise<TodoModel | null>
+  static async getTodo(id: string, userId: string) : Promise<TodoModel | null>
   {
 
     try {
-      const todo = await TodoModel.findOne({where: {id: id}});
+      const todo = await TodoModel.findOne({where: {id: id, userId: userId}});
       if (!todo) {
         throw new CustomError( "No todo found", 404)
       }
+  
+      
       return todo;
     }
     catch(err) {
@@ -47,5 +46,13 @@ export class TodoService {
       throw new CustomError('Unauthorized: You are not allowed to delete this todo', 403);
     }
     await todo.destroy();
+  }
+  static async updateTodo(todoId: string, userId: string, data: UpdateTodoData) {
+    const todo = await TodoModel.findOne({ where: { id: todoId, userId } });
+    if (!todo) {
+      throw new CustomError('Todo not found', 404);
+    }
+    await todo.update(data);
+    return todo;
   }
 }

@@ -86,3 +86,27 @@ export const validateDeleteTodo = (req: Request, res: Response, next: NextFuncti
   }
   next();
 };
+
+export const validateUpdateTodo = (req: Request, res: Response, next: NextFunction) => {
+  const paramsSchema = Joi.object({
+    id: Joi.string().guid().required(),
+  });
+
+  const bodySchema = Joi.object({
+    title: Joi.string().optional(),
+    description: Joi.string().optional(),
+    isCompleted: Joi.boolean().optional(),
+  }).or('title', 'description', 'isCompleted');
+
+  const { error: paramsError } = paramsSchema.validate(req.params);
+  if (paramsError) {
+    return next(new CustomError("Invalid Request Parameters", 400));
+  }
+
+  const { error: bodyError } = bodySchema.validate(req.body);
+  if (bodyError) {
+    return next(new CustomError("Invalid Request Body: At least one of title, description, or isCompleted must be provided", 400));
+  }
+
+  next();
+};

@@ -35,3 +35,8 @@ interface CustomErrorInterface extends Error {
     }
 }
   
+export interface UpdateTodoData {
+  title?: string;
+  description?: string;
+  isCompleted?: boolean;
+}

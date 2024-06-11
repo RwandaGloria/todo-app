@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateDeleteTodo = exports.validateLogin = exports.validateSignUp = exports.validateCreateTodo = exports.validateGetTodo = exports.validateGetAllTodos = void 0;
+exports.validateUpdateTodo = exports.validateDeleteTodo = exports.validateLogin = exports.validateSignUp = exports.validateCreateTodo = exports.validateGetTodo = exports.validateGetAllTodos = void 0;
 const joi_1 = __importDefault(require("joi"));
 const types_1 = require("../types/types");
 const validateGetAllTodos = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -91,3 +91,23 @@ const validateDeleteTodo = (req, res, next) => {
     next();
 };
 exports.validateDeleteTodo = validateDeleteTodo;
+const validateUpdateTodo = (req, res, next) => {
+    const paramsSchema = joi_1.default.object({
+        id: joi_1.default.string().guid().required(),
+    });
+    const bodySchema = joi_1.default.object({
+        title: joi_1.default.string().optional(),
+        description: joi_1.default.string().optional(),
+        isCompleted: joi_1.default.boolean().optional(),
+    }).or('title', 'description', 'isCompleted');
+    const { error: paramsError } = paramsSchema.validate(req.params);
+    if (paramsError) {
+        return next(new types_1.CustomError("Invalid Request Parameters", 400));
+    }
+    const { error: bodyError } = bodySchema.validate(req.body);
+    if (bodyError) {
+        return next(new types_1.CustomError("Invalid Request Body: At least one of title, description, or isCompleted must be provided", 400));
+    }
+    next();
+};
+exports.validateUpdateTodo = validateUpdateTodo;

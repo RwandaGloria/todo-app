@@ -26,7 +26,7 @@ export class UserService {
         return { token, user: userWithoutPassword };
       } catch (error) {    
         if (error instanceof UniqueConstraintError) {
-            throw { message: 'User with this email already exists', statusCode: 409 };
+            throw  new CustomError('User with this email already exists', 409);
           }
           console.error(error)
           throw new CustomError('Error creating user', 500);        

@@ -15,13 +15,14 @@ export const getAllTodosController = async (req: Request, res: Response, next: N
         next(err)
     }
   };
-  export const  getTodoController = async (req: Request, res: Response, next: NextFunction) => {
+  export const getTodoController = async (req: Request, res: Response, next: NextFunction) => {
     try {
     const id = req.params.id;
+    const userId = req.user.userId;
     if (!id) {
         throw new CustomError("This Id is invalid", 400);
     }
-    const todo = await TodoService.getTodo(id);
+    const todo = await TodoService.getTodo(id, userId);
     return res.status(200).json(todo);
   }
 catch(err) 
@@ -60,7 +61,20 @@ export const deleteTodoController = async (req: Request, res: Response, next: Ne
     next(err)
   }
 }
-
+export const updateTodoController = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const todoId = req.params.id;
+    const userId = req.user.userId;
+    const body = req.body;
+    const updatedTodo = await TodoService.updateTodo(todoId, userId, body);
+    return res.status(200).json(updatedTodo);
+  } catch (err) {
+    if (err instanceof CustomError) {
+      return res.status(err.statusCode).json({ message: err.message });
+    }
+    next(err);
+  }
+};
 
   
   

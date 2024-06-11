@@ -22,5 +22,12 @@ exports.fakeTodos = [
         title: "Exercise",
         isCompleted: false,
         userId: "c9b1a2b2-4f3e-4aef-998d-1cfa2a431f0c"
+    },
+    {
+        id: "f34hb6a4-4c5g-6bef-210d-4gfa5a433d0d",
+        description: "Go for a run",
+        title: "Exercise",
+        isCompleted: false,
+        userId: "c9b1a2b2-4f3e-4aef-998d-1cfa2a431f0c"
     }
 ];

@@ -63,5 +63,15 @@ class TodoService {
             yield todo.destroy();
         });
     }
+    static updateTodo(todoId, userId, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const todo = yield TodoModel_1.TodoModel.findOne({ where: { id: todoId, userId } });
+            if (!todo) {
+                throw new types_1.CustomError('Todo not found', 404);
+            }
+            yield todo.update(data);
+            return todo;
+        });
+    }
 }
 exports.TodoService = TodoService;

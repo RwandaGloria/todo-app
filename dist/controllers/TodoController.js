@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTodoController = exports.createTodoController = exports.getTodoController = exports.getAllTodosController = void 0;
+exports.updateTodoController = exports.deleteTodoController = exports.createTodoController = exports.getTodoController = exports.getAllTodosController = void 0;
 const todoService_1 = require("../services/todoService");
 const types_1 = require("../types/types");
 const getAllTodosController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -71,3 +71,19 @@ const deleteTodoController = (req, res, next) => __awaiter(void 0, void 0, void 
     }
 });
 exports.deleteTodoController = deleteTodoController;
+const updateTodoController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const todoId = req.params.id;
+        const userId = req.user.userId;
+        const body = req.body;
+        const updatedTodo = yield todoService_1.TodoService.updateTodo(todoId, userId, body);
+        return res.status(200).json(updatedTodo);
+    }
+    catch (err) {
+        if (err instanceof types_1.CustomError) {
+            return res.status(err.statusCode).json({ message: err.message });
+        }
+        next(err);
+    }
+});
+exports.updateTodoController = updateTodoController;
