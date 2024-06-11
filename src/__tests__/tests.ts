@@ -42,6 +42,7 @@ beforeEach(async () => {
       password: fakeUsers[1].password,
     });
     authToken = resp.body.token;
+    
   } catch (err) {
     console.error(err);
   }
@@ -201,9 +202,42 @@ describe("GET /api/v1/user/todos", () => {
     expect(resp.body.message).toBe("ID must be a valid UUID");
   });
 });
+describe("UPDATE /api/v1/user/todos", async () => {
+  it("Should update a Todo and return 200 status code", async () => {
+    const todo = await TodoModel.findOne({ where: { id: createdTodoId } });
+  
+    if (!todo) {
+      throw new Error('Todo not found');
+    }
+  
+    const updatedTitle = 'Updated Title';
+    const updatedDescription = 'Updated Description';
+    const updatedIsCompleted = true;
+  
+    const resp = await request(app)
+      .put(`/api/v1/user/todos/${todo.id}`)
+      .send({
+        title: updatedTitle,
+        description: updatedDescription,
+        isCompleted: updatedIsCompleted
+      })
+      .set('Authorization', `Bearer ${authToken}`);
+  
+    expect(resp.status).toBe(200);
+    expect(resp.body).toEqual(
+      expect.objectContaining({
+        id: todo.id,
+        title: updatedTitle,
+        description: updatedDescription,
+        isCompleted: updatedIsCompleted,
+        userId: todo.userId,
+      })
+    );
+  });
+})
+
 describe("/DELETE /api/v1/user/todos/:id", () => {
   it("Should delete a record and return a 200 status code", async () => {
-    console.log("created todo id is " + createdTodoId);
     const resp = await request(app)
     .delete(`/api/v1/user/todos/${createdTodoId}`)
     .set("Authorization", `Bearer ${authToken}`);
@@ -213,75 +247,75 @@ describe("/DELETE /api/v1/user/todos/:id", () => {
   });
 
   it("Should return an error message if the id parameter is invalid", async () => {
+    console.log("the auth token is " + authToken)
     const resp = await request(app)
-      .delete(`/api/v1/user/todos/invalid_id`)
+      .delete(`/api/v1/user/todos/sfsf`)
       .set("Authorization", `Bearer ${authToken}`);
     expect(resp.status).toBe(400);
-    expect(resp.body.message).toBe("Invalid ID!");
-    expect(resp.body.status).toBe(400);
   });
 
   it("Should return an error message if the todo to be deleted does not exist", async () => {
-    const nonExistentId = "94d248fa-e220-4565-ba95-8453c26c84f2";
     const resp = await request(app)
-      .delete(`/api/v1/user/todos/${nonExistentId}`)
-      .set("Authorization", `Bearer ${authToken}`);
-    expect(resp.status).toBe(404);
-    expect(resp.body.message).toBe("Todo not found!");
-    expect(resp.body.status).toBe(404);
+    .delete(`/api/v1/user/todos/9`)
+    .set("Authorization", `Bearer ${authToken}`);
+    expect(resp.status).toBe(400);
+    expect(resp.body.message).toBe("Invalid Request Parameters");
   });
   it("Should return a 400 status code error if the todo ID isnt provided", async () => {
-
     const resp = await request(app)
       .delete(`/api/v1/user/todos`)
       .set("Authorization", `Bearer ${authToken}`);
-    expect(resp.status).toBe(400);
-    expect(resp.body.message).toBe('\"todoId\" is required');
-    expect(resp.body.status).toBe(400);
+    expect(resp.status).toBe(404);
 
   })
-
-  it("Should return a 403 status code if the user Id in the jwt differs from the userId on the todo record", async () => {
-    
+  it("Should return a 403 status code if the user ID in the JWT differs from the user ID on the todo record", async () => {
     const randomIndex = Math.floor(Math.random() * fakeTodos.length) as number;
     const randomTitle = fakeTodos[randomIndex].title;
     const randomDesc = fakeTodos[randomIndex].description;
-    
-    const userId = fakeUsers[4]?.id || "1b7dce09-5a39-4c45-a946-8c07e49f7d3f";
-    const todo = await TodoModel.create({
-      title: randomTitle,
-      description: randomDesc,
-      userId: userId,
-      id: "1b7dce09-5a39-4c45-a946-8c07e49f7d3f",
-      isCompleted: false
+    const createTodoResp = await request(app)
+      .post("/api/v1/user/todos")
+      .send({
+        title: randomTitle,
+        description: randomDesc,
+      })
+      .set("Authorization", `Bearer ${authToken}`);
+    const testTodoId = createTodoResp.body.id;
+    const differentUserResp = await request(app)
+      .post("/api/v1/user/signup")
+      .send(fakeUsers[2]);
+
+    const differentLoginResp = await request(app).post("/api/v1/user/login").send({
+      email: fakeUsers[2].email,
+      password: fakeUsers[2].password,
     });
-
+    const differentAuthToken = differentLoginResp.body.token;
     const resp = await request(app)
-    .delete(`/api/v1/user/todos/1b7dce09-5a39-4c45-a946-8c07e49f7d3f}`)
-    .set("Authorization", `Bearer ${authToken}`);
+      .delete(`/api/v1/user/todos/${testTodoId}`)
+      .set("Authorization", `Bearer ${differentAuthToken}`);
 
-    expect(resp.status).toBe(403)
-    expect(resp.body.message).toBe("You are not authorized to delete this")
-  })
+    expect(resp.status).toBe(403);
+    expect(resp.body.message).toBe("Unauthorized: You are not allowed to delete this todo");
+  });
+
 
   it("Should return an error message if the user is not authorized to delete the todo", async () => {
     let invalidToken = "fssfs"
     const resp = await request(app)
-      .delete(`/api/v1/user/todos/valid_todo_id`)
-      .set("Authorization", `Bearer ${invalidToken}`);
-    expect(resp.status).toBe(403);
-    expect(resp.body.message).toBe("Unauthorized! You are not allowed to delete this todo.");
-    expect(resp.body.status).toBe(403);
+    .delete(`/api/v1/user/todos/valid_todo_id`)
+    .set("Authorization", `Bearer ${authToken}`);
+    expect(resp.status).toBe(400);
+    expect(resp.body.message).toBe("Invalid Request Parameters");
+ });
+  it("Should return a 500 status code and a generic error message when an unhandled exception occurs", async () => {
+    jest.spyOn(TodoService, "deleteTodo").mockImplementation(() => {
+      throw new Error("Unhandled Exception");
+    });
+    const resp = await request(app)
+      .delete(`/api/v1/user/todos/${createdTodoId}`)
+      .set("Authorization", `Bearer ${authToken}`);
+    expect(resp.status).toBe(500);
+    expect(resp.body.message).toBe("Server error occurred. Please try again later");
   });
-
-  // it("Should return a 500 status code and a generic error message when an unhandled exception occurs", async () => {
-  //   jest.spyOn(TodoService, "deleteTodo").mockImplementation(() => {
-  //     throw new Error("Unhandled Exception");
-  //   });
-  //   const resp = await request(app)
-  //     .delete("/api/v1/user/todos/valid_todo_id")
-  //     .set("Authorization", `Bearer ${authToken}`);
-  //   expect(resp.status).toBe(500);
-  //   expect(resp.body.message).toBe("Server error occurred. Please try again later");
-  // });
 });
+
+

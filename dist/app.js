@@ -44,15 +44,10 @@ const routes_1 = require("./routes");
 dotenv.config();
 exports.app = (0, express_1.default)();
 const PORT = process.env.PORT || 3400;
-exports.app.use(error_1.errorHandler);
 exports.app.use(express_1.default.urlencoded({ extended: true }));
 exports.app.use(express_1.default.json());
 exports.app.use("/api/v1", routes_1.route);
 exports.app.use(error_1.errorHandler);
-exports.app.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("hi");
-    res.send("Hello!");
-}));
 exports.app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, syncModel_1.syncModels)();
     console.log(`Server is running on port ${PORT}`);

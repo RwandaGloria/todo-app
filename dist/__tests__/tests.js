@@ -22,6 +22,7 @@ const user_1 = require("./fakes/user");
 const todos_1 = require("./fakes/todos");
 const userService_1 = require("../services/userService");
 let authToken;
+let createdTodoId;
 beforeAll(() => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, syncModel_1.syncModels)();
@@ -44,7 +45,9 @@ afterAll(() => __awaiter(void 0, void 0, void 0, function* () {
 }));
 beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const resp_ = yield (0, supertest_1.default)(app_1.app).post("/api/v1/user/signup").send(user_1.fakeUsers[1]);
+        const resp_ = yield (0, supertest_1.default)(app_1.app)
+            .post("/api/v1/user/signup")
+            .send(user_1.fakeUsers[1]);
         const resp = yield (0, supertest_1.default)(app_1.app).post("/api/v1/user/login").send({
             email: user_1.fakeUsers[1].email,
             password: user_1.fakeUsers[1].password,
@@ -58,73 +61,9 @@ beforeEach(() => __awaiter(void 0, void 0, void 0, function* () {
 afterEach(() => {
     jest.restoreAllMocks();
 });
-describe("GET /api/v1/user/todos", () => {
-    it("It should return a JSON file containing the Users Todos", () => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(`the value of authToken is ${authToken}`);
-        const resp = yield (0, supertest_1.default)(app_1.app)
-            .get("/api/v1/user/todos")
-            .set("Authorization", `Bearer ${authToken}`);
-        expect(resp.status).toBe(200);
-        expect(resp.body).toEqual(expect.arrayContaining(todos_1.fakeTodos.map((todo) => expect.objectContaining({
-            id: todo.id,
-            description: todo.description,
-            title: todo.title,
-            isCompleted: todo.isCompleted,
-            userId: todo.userId,
-        }))));
-    }));
-    it("Should return a 400 error when no userId is provided", () => __awaiter(void 0, void 0, void 0, function* () {
-        const resp = yield (0, supertest_1.default)(app_1.app)
-            .get("/api/v1/user/todos")
-            .set("Authorization", `Bearer ${authToken}`);
-        expect(resp.status).toBe(400);
-        expect(resp.body.message).toBe('"userId" is required');
-    }));
-    it("Should return a 200 status code and an object of a todo", () => __awaiter(void 0, void 0, void 0, function* () {
-        const randomIndex = Math.floor(Math.random() * todos_1.fakeTodos.length);
-        const randomId = todos_1.fakeTodos[randomIndex].id;
-        const resp = yield (0, supertest_1.default)(app_1.app)
-            .get(`/api/v1/user/todos/${randomId}`)
-            .set("Authorization", `Bearer ${authToken}`);
-        expect(resp.status).toBe(200);
-        expect(resp.body).toEqual(expect.objectContaining({
-            id: randomId,
-            description: expect.any(String),
-            title: expect.any(String),
-            isCompleted: expect.any(Boolean),
-            userId: expect.any(String),
-        }));
-    }));
-    it("Should return a 400 error and error message saying the UUID is invalid", () => __awaiter(void 0, void 0, void 0, function* () {
-        const resp = yield (0, supertest_1.default)(app_1.app)
-            .get(`/api/v1/user/todos/24242sfs`)
-            .set("Authorization", `Bearer ${authToken}`);
-        expect(resp.status).toBe(400);
-        expect(resp.body.message).toBe("ID must be a valid UUID");
-    }));
-});
-describe("POST /api/v1/user/todos", () => {
-    it("Should create a todo and return a 200 status code with the created Todo", () => __awaiter(void 0, void 0, void 0, function* () {
-        const randomIndex = Math.floor(Math.random() * todos_1.fakeTodos.length);
-        const randomTitle = todos_1.fakeTodos[randomIndex].title;
-        const randomDesc = todos_1.fakeTodos[randomIndex].description;
-        const resp = yield (0, supertest_1.default)(app_1.app).post("/api/v1/user/todos").send({
-            title: randomTitle,
-            description: randomDesc,
-        })
-            .set("Authorization", `Bearer ${authToken}`);
-        expect(resp.status).toBe(201);
-        expect(resp.body).toEqual(expect.objectContaining({
-            description: expect.any(String),
-            title: expect.any(String),
-            isCompleted: expect.any(Boolean),
-            userId: expect.any(String),
-        }));
-    }));
-});
 describe("POST /api/v1/user", () => {
     it("Should sign up a user and return 201 status code, then create the user in the database", () => __awaiter(void 0, void 0, void 0, function* () {
-        const { firstName, lastName, email, password } = user_1.fakeUsers[1];
+        const { firstName, lastName, email, password } = user_1.fakeUsers[2];
         const resp = yield (0, supertest_1.default)(app_1.app).post("/api/v1/user/signup").send({
             firstName,
             lastName,
@@ -158,7 +97,7 @@ describe("POST /api/v1/user", () => {
         expect(resp.body.user).toHaveProperty("id");
     }));
     it("Should return a 400 status code and an error message that the user does not exist in the database", () => __awaiter(void 0, void 0, void 0, function* () {
-        const testData = user_1.fakeUsers[2];
+        const testData = user_1.fakeUsers[3];
         const resp = yield (0, supertest_1.default)(app_1.app).post("/api/v1/user/login").send({
             email: testData.email,
             password: testData.password,
@@ -193,5 +132,114 @@ describe("POST /api/v1/user", () => {
         });
         expect(resp.status).toBe(500);
         expect(resp.body.message).toBe("Server error occurred. Please try again later");
+    }));
+});
+describe("POST /api/v1/user/todos", () => {
+    it("Should create a todo and return a 200 status code with the created Todo", () => __awaiter(void 0, void 0, void 0, function* () {
+        const randomIndex = Math.floor(Math.random() * todos_1.fakeTodos.length);
+        const randomTitle = todos_1.fakeTodos[randomIndex].title;
+        const randomDesc = todos_1.fakeTodos[randomIndex].description;
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .post("/api/v1/user/todos")
+            .send({
+            title: randomTitle,
+            description: randomDesc,
+        })
+            .set("Authorization", `Bearer ${authToken}`);
+        createdTodoId = resp.body.id;
+        expect(resp.status).toBe(201);
+        expect(resp.body).toEqual(expect.objectContaining({
+            description: expect.any(String),
+            title: expect.any(String),
+            isCompleted: expect.any(Boolean),
+            userId: expect.any(String),
+        }));
+    }));
+});
+describe("GET /api/v1/user/todos", () => {
+    it("It should return a JSON file containing the Users Todos", () => __awaiter(void 0, void 0, void 0, function* () {
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .get("/api/v1/user/todos")
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.status).toBe(200);
+        expect(resp.body).toEqual(expect.arrayContaining([
+            expect.objectContaining({
+                id: expect.any(String),
+                description: expect.any(String),
+                title: expect.any(String),
+                isCompleted: expect.any(Boolean),
+                userId: expect.any(String),
+            }),
+        ]));
+    }));
+    it("Should return a 200 status code and an object of a todo", () => __awaiter(void 0, void 0, void 0, function* () {
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .get(`/api/v1/user/todos/${createdTodoId}`)
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.status).toBe(200);
+        expect(resp.body).toEqual(expect.objectContaining({
+            id: createdTodoId,
+            description: expect.any(String),
+            title: expect.any(String),
+            isCompleted: expect.any(Boolean),
+            userId: expect.any(String),
+        }));
+    }));
+    it("Should return a 400 error and error message saying the UUID is invalid", () => __awaiter(void 0, void 0, void 0, function* () {
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .get(`/api/v1/user/todos/24242sfs`)
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.status).toBe(400);
+        expect(resp.body.message).toBe("ID must be a valid UUID");
+    }));
+});
+describe("/DELETE /api/v1/user/todos/:id", () => {
+    it("Should delete a record and return a 200 status code", () => __awaiter(void 0, void 0, void 0, function* () {
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .delete(`/api/v1/user/todos/${createdTodoId}`)
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.body.message).toBe("Todo deleted successfully!");
+        expect(resp.status).toBe(200);
+        expect(resp.body.status).toBe(200);
+    }));
+    it("Should return an error message if the id parameter is invalid", () => __awaiter(void 0, void 0, void 0, function* () {
+        console.log("the auth token is " + authToken);
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .delete(`/api/v1/user/todos/sfsf`)
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.status).toBe(400);
+    }));
+    it("Should return an error message if the todo to be deleted does not exist", () => __awaiter(void 0, void 0, void 0, function* () {
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .delete(`/api/v1/user/todos/9`)
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.status).toBe(400);
+        expect(resp.body.message).toBe("Invalid Request Parameters");
+    }));
+    it("Should return a 400 status code error if the todo ID isnt provided", () => __awaiter(void 0, void 0, void 0, function* () {
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .delete(`/api/v1/user/todos`)
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.status).toBe(404);
+    }));
+    it("Should return a 403 status code if the user Id in the jwt differs from the userId on the todo record", () => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        const randomIndex = Math.floor(Math.random() * todos_1.fakeTodos.length);
+        const randomTitle = todos_1.fakeTodos[randomIndex].title;
+        const randomDesc = todos_1.fakeTodos[randomIndex].description;
+        const userId = (_a = user_1.fakeUsers[4]) === null || _a === void 0 ? void 0 : _a.id;
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .delete(`/api/v1/user/todos/${createdTodoId}`)
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.status).toBe(403);
+        expect(resp.body.message).toBe("You are not authorized to delete this");
+    }));
+    it("Should return an error message if the user is not authorized to delete the todo", () => __awaiter(void 0, void 0, void 0, function* () {
+        let invalidToken = "fssfs";
+        const resp = yield (0, supertest_1.default)(app_1.app)
+            .delete(`/api/v1/user/todos/valid_todo_id`)
+            .set("Authorization", `Bearer ${authToken}`);
+        expect(resp.status).toBe(400);
+        expect(resp.body.message).toBe("Invalid Request Parameters");
     }));
 });

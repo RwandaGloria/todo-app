@@ -10,4 +10,5 @@ const validators_1 = require("../middleware/validators");
 todoRoutes.get("/", TodoController_1.getAllTodosController);
 todoRoutes.get("/:id", validators_1.validateGetTodo, TodoController_1.getTodoController);
 todoRoutes.post("/", validators_1.validateCreateTodo, TodoController_1.createTodoController);
+todoRoutes.delete("/:id", validators_1.validateDeleteTodo, TodoController_1.deleteTodoController);
 exports.default = todoRoutes;

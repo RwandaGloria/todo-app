@@ -7,7 +7,6 @@ export const validateGetAllTodos = async (req: Request, res: Response, next: Nex
       userId: Joi.string().uuid().required(),
     });
     const { error } = await schema.validate(req.body);
-  
     if (error) {
      return next(new CustomError(error.details[0].message, 400));
     }
@@ -76,14 +75,14 @@ export const validateLogin = async (req: Request, res: Response, next: NextFunct
   next();
 };
 
-export const validateDeleteTodo = async (req: Request, res: Response, next: NextFunction) => {
+export const validateDeleteTodo = (req: Request, res: Response, next: NextFunction) => {
   const deleteTodoSchema = Joi.object({
-    id: Joi.string().guid().required()
+    id: Joi.string().guid().required(),
   });
 
   const { error } = deleteTodoSchema.validate(req.params);
   if (error) {
-    return next(new CustomError(error.details[0].message, 400));
+    return next(new CustomError("Invalid Request Parameters", 400));
   }
   next();
 };

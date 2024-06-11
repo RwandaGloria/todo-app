@@ -51,5 +51,17 @@ class TodoService {
             return newTodo;
         });
     }
+    static deleteTodo(id, userId) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const todo = yield TodoModel_1.TodoModel.findByPk(id);
+            if (!todo) {
+                throw new types_1.CustomError('Todo not found', 404);
+            }
+            if (todo.userId !== userId) {
+                throw new types_1.CustomError('Unauthorized: You are not allowed to delete this todo', 403);
+            }
+            yield todo.destroy();
+        });
+    }
 }
 exports.TodoService = TodoService;

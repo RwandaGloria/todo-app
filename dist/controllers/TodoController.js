@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTodoController = exports.getTodoController = exports.getAllTodosController = void 0;
+exports.deleteTodoController = exports.createTodoController = exports.getTodoController = exports.getAllTodosController = void 0;
 const todoService_1 = require("../services/todoService");
 const types_1 = require("../types/types");
 const getAllTodosController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -28,7 +28,7 @@ const getAllTodosController = (req, res, next) => __awaiter(void 0, void 0, void
 exports.getAllTodosController = getAllTodosController;
 const getTodoController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const id = req.user.userId;
+        const id = req.params.id;
         if (!id) {
             throw new types_1.CustomError("This Id is invalid", 400);
         }
@@ -56,3 +56,18 @@ const createTodoController = (req, res, next) => __awaiter(void 0, void 0, void 
     }
 });
 exports.createTodoController = createTodoController;
+const deleteTodoController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = req.params.id;
+        if (!id) {
+            throw new types_1.CustomError("ID must be provided", 400);
+        }
+        const userId = req.user.userId;
+        yield todoService_1.TodoService.deleteTodo(id, userId);
+        return res.status(200).json({ message: "Todo deleted successfully!", status: 200 });
+    }
+    catch (err) {
+        next(err);
+    }
+});
+exports.deleteTodoController = deleteTodoController;

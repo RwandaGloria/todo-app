@@ -48,8 +48,11 @@ export const deleteTodoController = async (req: Request, res: Response, next: Ne
 {
   try {
   const id = req.params.id;
+  if (!id) {
+    throw new CustomError("ID must be provided", 400)
+  }
   const userId = req.user.userId;
-  const isDeleted = await TodoService.deleteTodo(id, userId);
+  await TodoService.deleteTodo(id, userId);
   return res.status(200).json({ message: "Todo deleted successfully!", status: 200});
 
   }

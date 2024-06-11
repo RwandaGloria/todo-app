@@ -3,7 +3,7 @@ import {sequelize} from "../db/db";
 import { Todo } from "../types/types";
 
 export class TodoModel extends Model<Todo> {
-  // public id!: CreationOptional<string>;
+  public id!: CreationOptional<string>;
   public description!: string;
   public title!: string;
   public isCompleted!: boolean;

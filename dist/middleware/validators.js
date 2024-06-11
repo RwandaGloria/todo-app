@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateLogin = exports.validateSignUp = exports.validateCreateTodo = exports.validateGetTodo = exports.validateGetAllTodos = void 0;
+exports.validateDeleteTodo = exports.validateLogin = exports.validateSignUp = exports.validateCreateTodo = exports.validateGetTodo = exports.validateGetAllTodos = void 0;
 const joi_1 = __importDefault(require("joi"));
 const types_1 = require("../types/types");
 const validateGetAllTodos = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -80,3 +80,14 @@ const validateLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, func
     next();
 });
 exports.validateLogin = validateLogin;
+const validateDeleteTodo = (req, res, next) => {
+    const deleteTodoSchema = joi_1.default.object({
+        id: joi_1.default.string().guid().required(),
+    });
+    const { error } = deleteTodoSchema.validate(req.params);
+    if (error) {
+        return next(new types_1.CustomError("Invalid Request Parameters", 400));
+    }
+    next();
+};
+exports.validateDeleteTodo = validateDeleteTodo;
