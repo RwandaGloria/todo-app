@@ -7,4 +7,7 @@ exports.route = void 0;
 const express_1 = __importDefault(require("express"));
 exports.route = express_1.default.Router();
 const todoRoutes_1 = __importDefault(require("./todoRoutes"));
-exports.route.use("/user", todoRoutes_1.default);
+const userRoutes_1 = require("./userRoutes");
+const auth_1 = require("../middleware/auth");
+exports.route.use("/user/todos", auth_1.authenticateToken, todoRoutes_1.default);
+exports.route.use("/user", userRoutes_1.userRoutes);

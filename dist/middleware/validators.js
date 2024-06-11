@@ -12,18 +12,71 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateGetAllTodos = void 0;
+exports.validateLogin = exports.validateSignUp = exports.validateCreateTodo = exports.validateGetTodo = exports.validateGetAllTodos = void 0;
 const joi_1 = __importDefault(require("joi"));
-const Error_1 = require("../types/Error");
+const types_1 = require("../types/types");
 const validateGetAllTodos = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const schema = joi_1.default.object().keys({
         userId: joi_1.default.string().uuid().required(),
     });
-    console.log("Im here");
     const { error } = yield schema.validate(req.body);
     if (error) {
-        next(new Error_1.CustomError(error.details[0].message, 400));
+        return next(new types_1.CustomError(error.details[0].message, 400));
     }
     next();
 });
 exports.validateGetAllTodos = validateGetAllTodos;
+const validateGetTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const getTodoSchema = joi_1.default.object({
+        id: joi_1.default.string().uuid().required().messages({
+            'string.base': 'ID must be a string',
+            'string.empty': 'ID cannot be empty',
+            'string.guid': 'ID must be a valid UUID',
+            'any.required': 'ID is required',
+        }),
+    });
+    const { error } = getTodoSchema.validate(req.params);
+    if (error) {
+        return next(new types_1.CustomError(error.details[0].message, 400));
+    }
+    next();
+});
+exports.validateGetTodo = validateGetTodo;
+const validateCreateTodo = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const createTodoSchema = joi_1.default.object().keys({
+        title: joi_1.default.string().required().label("Title"),
+        description: joi_1.default.string().required().label("Description"),
+    });
+    const { error } = yield createTodoSchema.validate(req.body);
+    if (error) {
+        return next(new types_1.CustomError(error.details[0].message, 400));
+    }
+    next();
+});
+exports.validateCreateTodo = validateCreateTodo;
+const validateSignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const schema = joi_1.default.object({
+        firstName: joi_1.default.string().required(),
+        lastName: joi_1.default.string().required(),
+        email: joi_1.default.string().email().required(),
+        password: joi_1.default.string().min(6).required()
+    });
+    const { error } = schema.validate(req.body);
+    if (error) {
+        return next(new types_1.CustomError(error.details[0].message, 400));
+    }
+    next();
+});
+exports.validateSignUp = validateSignUp;
+const validateLogin = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const schema = joi_1.default.object({
+        email: joi_1.default.string().email().required(),
+        password: joi_1.default.string().required()
+    });
+    const { error } = schema.validate(req.body);
+    if (error) {
+        return next(new types_1.CustomError(error.details[0].message, 400));
+    }
+    next();
+});
+exports.validateLogin = validateLogin;

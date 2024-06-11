@@ -11,19 +11,44 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TodoService = void 0;
 const TodoModel_1 = require("../models/TodoModel");
+const types_1 = require("../types/types");
 class TodoService {
     static getAllTodos(userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const todos = yield TodoModel_1.TodoModel.findAll({ where: { userId } });
                 if (todos.length === 0) {
-                    throw { message: "No todos found", statusCode: 200 };
+                    throw new types_1.CustomError("No todos found", 404);
                 }
                 return todos;
             }
             catch (err) {
-                throw { message: "Error fetching todos", statusCode: 500 };
+                console.error(err);
+                throw err;
             }
+        });
+    }
+    static getTodo(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const todo = yield TodoModel_1.TodoModel.findOne({ where: { id: id } });
+                if (!todo) {
+                    throw new types_1.CustomError("No todo found", 404);
+                }
+                return todo;
+            }
+            catch (err) {
+                throw err;
+            }
+        });
+    }
+    static createTodo(body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const newTodo = yield TodoModel_1.TodoModel.create(body);
+            if (!newTodo) {
+                throw new types_1.CustomError("Todo was not created. Please try again later.", 500);
+            }
+            return newTodo;
         });
     }
 }

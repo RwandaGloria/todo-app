@@ -23,6 +23,7 @@ TodoModel.init({
     isCompleted: {
         type: sequelize_1.DataTypes.BOOLEAN,
         allowNull: false,
+        defaultValue: false
     },
     userId: {
         type: sequelize_1.DataTypes.UUID,

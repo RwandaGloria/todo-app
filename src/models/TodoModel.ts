@@ -1,6 +1,6 @@
 import { Model, DataTypes, CreationOptional } from 'sequelize';
 import {sequelize} from "../db/db";
-import { Todo } from "../types/Todo";
+import { Todo } from "../types/types";
 
 export class TodoModel extends Model<Todo> {
   // public id!: CreationOptional<string>;
@@ -28,6 +28,7 @@ TodoModel.init(
     isCompleted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+      defaultValue: false
     },
 
     userId: {

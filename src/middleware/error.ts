@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { CustomError } from "../types/Error";
+import { CustomError } from "../types/types";
 import logger from "../utils/logger";
 
 

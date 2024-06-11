@@ -1,5 +1,5 @@
 import { Model, DataTypes, CreationOptional, Sequelize } from 'sequelize';
-import { User } from '../types/User';
+import { User } from '../types/types';
 import {sequelize} from '../db/db';
 import {TodoModel} from './TodoModel';
 
