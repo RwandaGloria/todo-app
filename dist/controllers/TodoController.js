@@ -15,9 +15,6 @@ const types_1 = require("../types/types");
 const getAllTodosController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.user.userId;
-        if (!userId) {
-            throw new types_1.CustomError("No todos found", 404);
-        }
         const todos = yield todoService_1.TodoService.getAllTodos(userId);
         return res.status(200).json(todos);
     }
@@ -29,10 +26,11 @@ exports.getAllTodosController = getAllTodosController;
 const getTodoController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = req.params.id;
+        const userId = req.user.userId;
         if (!id) {
             throw new types_1.CustomError("This Id is invalid", 400);
         }
-        const todo = yield todoService_1.TodoService.getTodo(id);
+        const todo = yield todoService_1.TodoService.getTodo(id, userId);
         return res.status(200).json(todo);
     }
     catch (err) {
@@ -43,7 +41,7 @@ exports.getTodoController = getTodoController;
 const createTodoController = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const body = req.body;
     const userId = req.user.userId;
-    if (!body) {
+    if (body === null || !body || Object.keys(body).length === 0) {
         throw new types_1.CustomError("Invalid input. Please provide input", 400);
     }
     const todoWithUserId = Object.assign(Object.assign({}, body), { userId });

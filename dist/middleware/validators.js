@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateUpdateTodo = exports.validateDeleteTodo = exports.validateLogin = exports.validateSignUp = exports.validateCreateTodo = exports.validateGetTodo = exports.validateGetAllTodos = void 0;
 const joi_1 = __importDefault(require("joi"));
 const types_1 = require("../types/types");
+const xss_1 = __importDefault(require("xss"));
 const validateGetAllTodos = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const schema = joi_1.default.object().keys({
         userId: joi_1.default.string().uuid().required(),
@@ -56,7 +57,13 @@ const validateCreateTodo = (req, res, next) => __awaiter(void 0, void 0, void 0,
 exports.validateCreateTodo = validateCreateTodo;
 const validateSignUp = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const schema = joi_1.default.object({
-        firstName: joi_1.default.string().required(),
+        firstName: joi_1.default.string().custom((value, helpers) => {
+            const sanitizedValue = (0, xss_1.default)(value);
+            if (sanitizedValue !== value) {
+                return helpers.error('any.invalid');
+            }
+            return sanitizedValue;
+        }).required(),
         lastName: joi_1.default.string().required(),
         email: joi_1.default.string().email().required(),
         password: joi_1.default.string().min(6).required()

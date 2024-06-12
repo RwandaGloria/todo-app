@@ -15,23 +15,14 @@ const types_1 = require("../types/types");
 class TodoService {
     static getAllTodos(userId) {
         return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const todos = yield TodoModel_1.TodoModel.findAll({ where: { userId } });
-                if (todos.length === 0) {
-                    throw new types_1.CustomError("No todos found", 404);
-                }
-                return todos;
-            }
-            catch (err) {
-                console.error(err);
-                throw err;
-            }
+            const todos = yield TodoModel_1.TodoModel.findAll({ where: { userId } });
+            return todos;
         });
     }
-    static getTodo(id) {
+    static getTodo(id, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const todo = yield TodoModel_1.TodoModel.findOne({ where: { id: id } });
+                const todo = yield TodoModel_1.TodoModel.findOne({ where: { id: id, userId: userId } });
                 if (!todo) {
                     throw new types_1.CustomError("No todo found", 404);
                 }

@@ -33,5 +33,12 @@ exports.fakeUsers = [
         lastName: "Nell",
         email: "Rick-Nell@gmail.com",
         password: "rickNell"
+    },
+    {
+        id: "0c6dct09-4a21-8h30-a946-8c07e49f7d3f",
+        firstName: "Peter",
+        lastName: "Nelson",
+        email: "Peter-Nelson@gmail.com",
+        password: "peter-nelson"
     }
 ];

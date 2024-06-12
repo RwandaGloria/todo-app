@@ -29,19 +29,21 @@ catch(err)
   }
   export const createTodoController = async (req: Request, res: Response, next: NextFunction) => {
     const body = req.body;
-    const userId = req.user.userId
-    if (!body) {
+    const userId = req.user.userId;
+
+    if (body === null || !body || Object.keys(body).length === 0) {
         throw new CustomError("Invalid input. Please provide input", 400);
     }
+
     const todoWithUserId = { ...body, userId };
     try {
         const newTodo = await TodoService.createTodo(todoWithUserId);
         return res.status(201).json(newTodo);
     } catch (error) {
-      
-        next(error)
+        next(error);
     }
 };
+
 export const deleteTodoController = async (req: Request, res: Response, next: NextFunction) => 
 {
   try {

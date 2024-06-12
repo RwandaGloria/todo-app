@@ -10,29 +10,27 @@ dotenv.config();
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY as string;
 export class UserService {
-    static async signUp(body: User): Promise<object> {
-      try {
-        const { firstName, lastName, password, email } = body;
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await UserModel.create({ firstName, lastName, email, password: hashedPassword });
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: '1h' });
+  static async signUp(body: User): Promise<object> {
+    try {
+      const { firstName, lastName, password, email } = body;
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await UserModel.create({ firstName, lastName, email, password: hashedPassword });
+      const token = jwt.sign({ userId: user.id }, JWT_SECRET_KEY, { expiresIn: '1h' });
   
-        const userWithoutPassword = {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-        };
-        return { token, user: userWithoutPassword };
-      } catch (error) {    
-        if (error instanceof UniqueConstraintError) {
-            throw  new CustomError('User with this email already exists', 409);
-          }
-          throw new CustomError('Error creating user', 500);        
+      const userWithoutPassword = {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+      };
+      return { token, user: userWithoutPassword };
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) { 
+        throw new CustomError('User with this email already exists', 409);
       }
+      throw new CustomError('Error creating user', 500); 
     }
-
-    static async login(email: string, password: string): Promise<{ findUser: User; token: string }> {
+  } static async login(email: string, password: string): Promise<{ findUser: User; token: string }> {
         try {
             const findUser = await this.findUserByEmail(email);
             if (!findUser) {

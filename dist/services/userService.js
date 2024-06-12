@@ -39,9 +39,8 @@ class UserService {
             }
             catch (error) {
                 if (error instanceof sequelize_1.UniqueConstraintError) {
-                    throw { message: 'User with this email already exists', statusCode: 409 };
+                    throw new types_1.CustomError('User with this email already exists', 409);
                 }
-                console.error(error);
                 throw new types_1.CustomError('Error creating user', 500);
             }
         });
@@ -72,7 +71,6 @@ class UserService {
                 return user;
             }
             catch (error) {
-                console.error(error);
                 throw new types_1.CustomError("Error finding user", 500);
             }
         });
