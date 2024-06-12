@@ -1,6 +1,5 @@
-// jest.config.ts
 import type { Config } from '@jest/types';
-import path from 'path'; // Import path module to handle file paths
+import path from 'path';
 
 const config: Config.InitialOptions = {
   preset: 'ts-jest',

@@ -1,10 +1,9 @@
 import request from 'supertest';
-import { app } from '../app'; // Adjust the path based on your project structure
+import { app } from '../app';
 import { UserService } from '../services/userService';
 import { CustomError } from '../types/types';
 import { User } from '../types/types';
 import { syncModels } from '../models/syncModel';
-// Mock the UserService
 jest.mock('../services/userService');
 
 describe('AuthController', () => {

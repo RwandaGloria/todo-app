@@ -20,19 +20,15 @@ beforeAll(async () => {
     await syncModels();
     await UserModel.create(fakeUsers[0]);
     await TodoModel.bulkCreate(fakeTodos);
-    jest.spyOn(console, 'log').mockImplementation(() => {});
-
-  } catch (err) {
-  }
+    jest.spyOn(console, "log").mockImplementation(() => {});
+  } catch (err) {}
 });
 afterAll(async () => {
   try {
     await TodoModel.destroy({ where: {} });
     await UserModel.destroy({ where: {} });
     await sequelize.close();
-
-  } catch (err) {
-  }
+  } catch (err) {}
 });
 beforeEach(async () => {
   try {
@@ -45,8 +41,7 @@ beforeEach(async () => {
     });
     authToken = resp.body.token;
     userId = resp.body.user.id;
-  } catch (err) {
-  }
+  } catch (err) {}
 });
 afterEach(() => {
   jest.restoreAllMocks();
@@ -103,8 +98,8 @@ describe("/POST /api/v1/user/login", () => {
 
     expect(resp.status).toBe(200);
     expect(resp.body).toHaveProperty("token");
-    expect(resp.body.user).toHaveProperty("email"); // Access email property under user
-    expect(resp.body.user.email).toBe(testData.email); // Validate email value
+    expect(resp.body.user).toHaveProperty("email"); 
+    expect(resp.body.user.email).toBe(testData.email); 
     expect(resp.body.user).toHaveProperty("firstName");
     expect(resp.body.user).toHaveProperty("lastName");
     expect(resp.body.user).toHaveProperty("id");
@@ -136,7 +131,10 @@ describe("POST /api/v1/user/todos", () => {
     );
   });
   it("Should return a 400 status code if the request body is empty", async () => {
-    const resp = await request(app).post("/api/v1/user/todos").send({}).set("Authorization", `Bearer ${authToken}`);
+    const resp = await request(app)
+      .post("/api/v1/user/todos")
+      .send({})
+      .set("Authorization", `Bearer ${authToken}`);
 
     expect(resp.status).toBe(400);
     expect(resp.body.message).toBe('"Title" is required');
@@ -162,12 +160,10 @@ describe("POST /api/v1/user/todos", () => {
     expect(resp.body.message).toBe('"Description" is required');
   });
   it("Should return a 401 status code if the authorization token is missing", async () => {
-    const resp = await request(app)
-      .post("/api/v1/user/todos")
-      .send({
-        title: "Test Title",
-        description: "Test Description",
-      });
+    const resp = await request(app).post("/api/v1/user/todos").send({
+      title: "Test Title",
+      description: "Test Description",
+    });
     expect(resp.status).toBe(401);
     expect(resp.body.message).toBe("Token not provided");
   });
@@ -255,7 +251,9 @@ describe("POST /api/v1/user/signup", () => {
       password: "short",
     });
     expect(resp.status).toBe(400);
-    expect(resp.body.message).toBe('"password" length must be at least 6 characters long');
+    expect(resp.body.message).toBe(
+      '"password" length must be at least 6 characters long'
+    );
   });
   it("Should return a 400 status code for non-string inputs in the fields", async () => {
     const resp = await request(app).post("/api/v1/user/signup").send({
@@ -274,7 +272,9 @@ describe("POST /api/v1/user/signup", () => {
       password: "password123",
     });
     expect(resp.status).toBe(400);
-    expect(resp.body.message).toContain('\"firstName\" contains an invalid value');
+    expect(resp.body.message).toContain(
+      '"firstName" contains an invalid value'
+    );
   });
 });
 
@@ -302,23 +302,21 @@ describe("GET /api/v1/user/todos/:id", () => {
     expect(resp.body.message).toBe("ID must be a valid UUID");
   });
   it("Should return a 403 status code if trying to access another user's todo", async () => {
-    const secondUserResp = await request(app)
-      .post("/api/v1/user/signup")
-      .send({
-        firstName: fakeUsers[4].firstName,
-        lastName: fakeUsers[4].lastName,
-        email: fakeUsers[4].email,
-        password: fakeUsers[4].password,
-      });
+    const secondUserResp = await request(app).post("/api/v1/user/signup").send({
+      firstName: fakeUsers[4].firstName,
+      lastName: fakeUsers[4].lastName,
+      email: fakeUsers[4].email,
+      password: fakeUsers[4].password,
+    });
     const secondUserToken = secondUserResp.body.userObj.token;
 
     const resp = await request(app)
       .get(`/api/v1/user/todos/${createdTodoId}`)
       .set("Authorization", `Bearer ${secondUserToken}`);
     expect(resp.status).toBe(404);
-    expect(resp.body.message).toBe("No todo found")
+    expect(resp.body.message).toBe("No todo found");
   });
-   it("Should return a 401 status code if the authorization token is missing", async () => {
+  it("Should return a 401 status code if the authorization token is missing", async () => {
     const resp = await request(app).get(`/api/v1/user/todos/${createdTodoId}`);
     expect(resp.status).toBe(401);
     expect(resp.body.message).toBe("Token not provided");
@@ -332,14 +330,16 @@ describe("GET /api/v1/user/todos/:id", () => {
   });
 
   it("Should return a 500 status code if there is a server error", async () => {
-    jest.spyOn(TodoModel, 'findOne').mockImplementation(() => {
+    jest.spyOn(TodoModel, "findOne").mockImplementation(() => {
       throw new Error("Server error");
     });
     const resp = await request(app)
       .get(`/api/v1/user/todos/${createdTodoId}`)
       .set("Authorization", `Bearer ${authToken}`);
     expect(resp.status).toBe(500);
-    expect(resp.body.message).toBe("Server error occurred. Please try again later");
+    expect(resp.body.message).toBe(
+      "Server error occurred. Please try again later"
+    );
   });
 });
 describe("GET /api/v1/user/todos", () => {
@@ -366,15 +366,12 @@ describe("GET /api/v1/user/todos", () => {
     expect(resp.body.message).toBe("Token not provided");
   });
   it("Should return an empty array if the user has no todos", async () => {
-    // Sign up a new user
-    const signupResp = await request(app)
-      .post("/api/v1/user/signup")
-      .send({
-        firstName: fakeUsers[5].firstName,
-        lastName: fakeUsers[5].lastName,
-        email: fakeUsers[5].email,
-        password: fakeUsers[5].password,
-      });
+    const signupResp = await request(app).post("/api/v1/user/signup").send({
+      firstName: fakeUsers[5].firstName,
+      lastName: fakeUsers[5].lastName,
+      email: fakeUsers[5].email,
+      password: fakeUsers[5].password,
+    });
     expect(signupResp.status).toBe(201);
 
     const newUserAuthToken = signupResp.body.userObj.token;
@@ -393,16 +390,17 @@ describe("GET /api/v1/user/todos", () => {
     expect(resp.body.message).toBe("Token is invalid");
   });
   it("Should return a 500 status code if there is a database connection issue", async () => {
-    jest.spyOn(TodoModel, 'findAll').mockImplementation(() => {
+    jest.spyOn(TodoModel, "findAll").mockImplementation(() => {
       throw new Error("Database connection error");
     });
     const resp = await request(app)
       .get("/api/v1/user/todos")
       .set("Authorization", `Bearer ${authToken}`);
     expect(resp.status).toBe(500);
-    expect(resp.body.message).toBe("Server error occurred. Please try again later");
+    expect(resp.body.message).toBe(
+      "Server error occurred. Please try again later"
+    );
   });
-  
 });
 describe("PUT /api/v1/user/todos", () => {
   it("Should update a Todo and return 200 status code", async () => {
@@ -471,15 +469,12 @@ describe("PUT /api/v1/user/todos", () => {
     expect(resp.body.message).toBe("Token is invalid");
   });
   it("Should return 404 status code if trying to update another user's todo", async () => {
-    // Sign up and login a second user
-    const secondUserResp = await request(app)
-      .post("/api/v1/user/signup")
-      .send({
-        firstName: "Another",
-        lastName: "User",
-        email: "anotheruser@example.com",
-        password: "password123",
-      });
+    const secondUserResp = await request(app).post("/api/v1/user/signup").send({
+      firstName: "Another",
+      lastName: "User",
+      email: "anotheruser@example.com",
+      password: "password123",
+    });
     const secondUserToken = secondUserResp.body.userObj.token;
     const resp = await request(app)
       .put(`/api/v1/user/todos/${createdTodoId}`)
@@ -499,7 +494,9 @@ describe("PUT /api/v1/user/todos", () => {
       .set("Authorization", `Bearer ${authToken}`);
 
     expect(resp.status).toBe(400);
-    expect(resp.body.message).toContain("Invalid Request Body: At least one of title, description, or isCompleted must be provided");
+    expect(resp.body.message).toContain(
+      "Invalid Request Body: At least one of title, description, or isCompleted must be provided"
+    );
   });
 
   it("Should handle partial updates", async () => {

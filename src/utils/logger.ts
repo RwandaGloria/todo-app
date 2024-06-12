@@ -1,5 +1,8 @@
 import { createLogger, format as winstonFormat, transports } from 'winston';
-const logFileName = "logs/app.log"
+
+const logFileName = "logs/app.log";
+const errorLogFileName = "logs/error.log";
+
 const logger = createLogger({
   level: 'info',
   format: winstonFormat.combine(
@@ -9,10 +12,17 @@ const logger = createLogger({
     winstonFormat.json()
   ),
   transports: [
-    new transports.Console(),
-    new transports.File({ filename: logFileName }),
+    new transports.Console({ silent: true }), 
+    new transports.Console({
+      level: 'info',
+      format: winstonFormat.combine(
+        winstonFormat.colorize(), 
+        winstonFormat.simple()
+      )
+    }),
+    new transports.File({ filename: logFileName, level: 'info' }), 
+    new transports.File({ filename: errorLogFileName, level: 'error' }) 
   ],
 });
 
 export default logger;
-

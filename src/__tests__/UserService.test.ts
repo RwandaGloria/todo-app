@@ -119,7 +119,6 @@ describe('UserService', () => {
           password: 'hashedPassword'
         } as UserModel;
         
-        // Mocking comparePassword to return false (incorrect password)
         jest.spyOn(UserModel, 'findOne').mockResolvedValueOnce(findUser);
         jest.spyOn(UserService, 'comparePassword').mockResolvedValueOnce(false as never);
         
