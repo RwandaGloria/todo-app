@@ -5,9 +5,6 @@ import { CustomError } from "../types/types";
 export const getAllTodosController = async (req: Request, res: Response, next: NextFunction) => {
     try {
     const userId = req.user.userId
-    if (!userId) {
-        throw new CustomError("No todos found", 404);
-      }
       const todos = await TodoService.getAllTodos(userId);
       return res.status(200).json(todos);
     }

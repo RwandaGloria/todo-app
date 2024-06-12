@@ -28,7 +28,6 @@ export class UserService {
         if (error instanceof UniqueConstraintError) {
             throw  new CustomError('User with this email already exists', 409);
           }
-          console.error(error)
           throw new CustomError('Error creating user', 500);        
       }
     }
@@ -56,7 +55,6 @@ export class UserService {
           const user = await UserModel.findOne({ where: { email } });
           return user;
         } catch (error) {
-          console.error(error);
           throw new CustomError("Error finding user", 500 );
         }
       }

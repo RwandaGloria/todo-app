@@ -6,9 +6,6 @@ import { Todo } from "../types/types";
 export class TodoService {
  static async getAllTodos(userId: string): Promise<TodoModel[]> {
       const todos = await TodoModel.findAll({ where: { userId } });
-      if (!todos) {
-        throw new CustomError("No todos found", 404)
-      }
       return todos;
   
   }

@@ -1,6 +1,7 @@
 import Joi from "joi";
 import { Request, Response, NextFunction } from "express";
 import { CustomError } from "../types/types";
+import xss from 'xss'; 
 
 export const validateGetAllTodos = async (req: Request, res: Response, next: NextFunction) => {
     const schema = Joi.object().keys({
@@ -47,17 +48,21 @@ export const validateCreateTodo = async (req: Request, res: Response, next: Next
 
 export const validateSignUp = async (req: Request, res: Response, next: NextFunction) => {
   const schema = Joi.object({
-      firstName: Joi.string().required(),
-      lastName: Joi.string().required(),
-      email: Joi.string().email().required(),
-      password: Joi.string().min(6).required()
+    firstName: Joi.string().custom((value, helpers) => {
+      const sanitizedValue = xss(value);
+      if (sanitizedValue !== value) {
+        return helpers.error('any.invalid');
+      }
+      return sanitizedValue;
+    }).required(),
+    lastName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required()
   });
-
   const { error } = schema.validate(req.body);
   if (error) {
     return next(new CustomError(error.details[0].message, 400));
   }
-
   next();
 };
 

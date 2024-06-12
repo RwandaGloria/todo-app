@@ -15,7 +15,7 @@ interface CustomErrorInterface extends Error {
   }
 
   export interface Todo {
-    id: string;
+    id?: string;
     description: string;
     title: string;
     isCompleted: boolean;
