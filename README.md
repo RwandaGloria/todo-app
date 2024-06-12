@@ -11,13 +11,13 @@ Welcome to TodoApp! This is an API designed for managing to-do tasks and uses JW
  4.  Install dependencies : `npm i`
  5.  Create .env file in root directory with the following variables defined: 
  
-`PORT=3400`
-`SQL_USER_NAME=root`
-`SQL_DB_NAME=todoapp`
-`SQL_PASSWORD=<SQL-PASSWORD>`
-`SQL_PORT=3306`
-`SQL_HOST=localhost`
-`JWT_SECRET_KEY=<YOUR_SECRET-KEY>`
+  - `PORT=3400`
+   - `SQL_USER_NAME=root`
+   - `SQL_DB_NAME=todoapp`
+   - `SQL_PASSWORD=<SQL-PASSWORD>`
+   - `SQL_PORT=3306`
+   - `SQL_HOST=localhost`
+   - `JWT_SECRET_KEY=<YOUR_SECRET-KEY>`
 
 To run the app, enter `npm start`  in terminal
 To start the tests, enter `npm test` 
