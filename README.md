@@ -1,6 +1,6 @@
 # TodoApp
 
-Welcome to TodoApp! This is an API designed for managing to-do tasks and uses JWT Based Authentication
+Welcome to TodoApp! This is an API service designed for managing to-do tasks and uses JWT Based Authentication
 
 
 # Installation
@@ -25,11 +25,11 @@ To start the tests, enter `npm test`
 
 ## How to Use
 The following endpoints require user-authentication before accessing
-POST  `/api/v1/user/todos/`
-GET `/api/v1/user/todos/`
-GET `/api/v1/user/todos/:id`
-PUT `/api/v1/user/todos/:id`
-DELETE `/api/v1/user/todos/:id`
+- POST  `/api/v1/user/todos/`
+- GET `/api/v1/user/todos/`
+- GET `/api/v1/user/todos/:id`
+- PUT `/api/v1/user/todos/:id`
+- DELETE `/api/v1/user/todos/:id`
 
 To authenticate, users must sign up or log in by accessing the appropriate route:
 
