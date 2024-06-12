@@ -5,10 +5,11 @@ Welcome to TodoApp! This is an API designed for managing to-do tasks and uses JW
 
 # Installation
 
- 1. Clone the repository : `git clone <repository_url>`
- 2.  Navigate to the project directory
- 3.  Install dependencies : `npm i`
- 4.  Create .env file in root directory with the following variables defined: 
+ 1. Clone the repository : `git clone https://github.com/RwandaGloria/todo-app`
+ 2.  Switch to the main branch: `git checkout main`
+ 3.  Navigate to the project directory
+ 4.  Install dependencies : `npm i`
+ 5.  Create .env file in root directory with the following variables defined: 
  
 `PORT=3400`
 `SQL_USER_NAME=root`
