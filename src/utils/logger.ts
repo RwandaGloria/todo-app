@@ -12,9 +12,8 @@ const logger = createLogger({
     winstonFormat.json()
   ),
   transports: [
-    new transports.Console({ silent: true }), 
     new transports.Console({
-      level: 'info',
+      level: 'info',  // Log only info level messages to the console
       format: winstonFormat.combine(
         winstonFormat.colorize(), 
         winstonFormat.simple()

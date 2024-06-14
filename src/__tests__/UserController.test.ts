@@ -7,19 +7,7 @@ import { syncModels } from '../models/syncModel';
 jest.mock('../services/userService');
 
 describe('AuthController', () => {
-  beforeEach(() => {
-
-    jest.clearAllMocks();
-  });
-  beforeAll(async () => {
-    try {
-
-      await syncModels();
-      jest.spyOn(console, 'log').mockImplementation(() => {});
-  
-    } catch (err) {
-    }
-  });
+ 
   describe('signUpController', () => {
     it('should sign up a user successfully', async () => {
       const body = {
@@ -139,5 +127,19 @@ describe('AuthController', () => {
       expect(response.status).toBe(401);
       expect(response.body.message).toBe('Login error');
     });
+  });
+   
+  beforeEach(() => {
+
+    jest.clearAllMocks();
+  });
+  beforeAll(async () => {
+    try {
+
+      await syncModels();
+      jest.spyOn(console, 'log').mockImplementation(() => {});
+  
+    } catch (err) {
+    }
   });
 });

@@ -8,6 +8,7 @@ import { CustomError } from "../types/types";
 
 
 beforeAll(() => {
+  
     jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword' as never);
     jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
     jest.spyOn(jwt, 'sign').mockReturnValue('fakeToken' as never);
